@@ -8,6 +8,8 @@ class MapBoxWidget extends StatefulWidget {
 
 class _MapBoxWidgetState extends State<MapBoxWidget> {
   late MapboxMapController mapController;
+  String selectedStyle = MapboxStyles.SATELLITE;
+  final LatLng _initialCameraPosition = LatLng(11.939545, 108.458877);
 
   void _onMapCreated(MapboxMapController controller) {
     mapController = controller;
@@ -16,13 +18,34 @@ class _MapBoxWidgetState extends State<MapBoxWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: MapboxMap(
-        onMapCreated: _onMapCreated,
-        initialCameraPosition: CameraPosition(
-          target: LatLng(11.939545, 108.458877),
-          zoom: 15,
-        ),
-        styleString: MapboxStyles.SATELLITE_STREETS, 
+      body: crearMapa(),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            child: const Icon(Icons.center_focus_strong),
+            onPressed: () {
+              setState(() {
+                if (selectedStyle == MapboxStyles.SATELLITE) {
+                  selectedStyle = MapboxStyles.MAPBOX_STREETS;
+                } else {
+                  selectedStyle = MapboxStyles.SATELLITE;
+                }
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  MapboxMap crearMapa() {
+    return MapboxMap(
+      styleString: selectedStyle, 
+      onMapCreated: _onMapCreated,
+      initialCameraPosition: CameraPosition(
+        target: _initialCameraPosition,
+        zoom: 15,
       ),
     );
   }
